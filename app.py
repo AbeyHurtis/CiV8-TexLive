@@ -16,8 +16,35 @@ async def compile_latex(latex_code: str = Form(...)):
         f.write(latex_code)
 
     try:
-        subprocess.run(["pdflatex", "-interaction=nonstopmode", tex_file], check=True, stdout=subprocess.PIPE)
+        subprocess.run(
+            ["pdflatex", "-interaction=nonstopmode", tex_file],
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
     except subprocess.CalledProcessError as e:
-        return {"error": "LaTeX compilation failed", "details": e.stdout.decode()}
+        cleanup_temp_files(job_id)
+        return {
+            "error": "LaTeX compilation failed",
+            "details": e.stderr.decode()
+        }
 
-    return FileResponse(path=pdf_file, media_type="application/pdf", filename="output.pdf")
+    response = FileResponse(
+        path=pdf_file,
+        media_type="application/pdf",
+        filename="output.pdf"
+    )
+
+    # Clean up in background after sending the response
+    @response.call_on_close
+    def cleanup():
+        cleanup_temp_files(job_id)
+
+    return response
+
+def cleanup_temp_files(job_id: str):
+    extensions = [".aux", ".log", ".pdf", ".tex"]
+    for ext in extensions:
+        fname = f"{job_id}{ext}"
+        if os.path.exists(fname):
+            os.remove(fname)
