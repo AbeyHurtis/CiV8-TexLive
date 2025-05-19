@@ -1,5 +1,3 @@
----
-
 ## 1. Overview of the Architecture
 
 * You deploy a **web service on Render** (Docker-based) that:
