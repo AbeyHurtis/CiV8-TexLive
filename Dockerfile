@@ -1,18 +1,31 @@
-FROM registry.gitlab.com/islandoftex/images/texlive:latest
+FROM debian:bullseye-slim
 
-# Install Python and pip
-RUN apt-get update && \
-    apt-get install -y python3 python3-pip && \
-    apt-get clean
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TEXLIVE_VERSION=2025
+ENV PATH=/usr/local/texlive/${TEXLIVE_VERSION}/bin/x86_64-linux:$PATH
 
-# Install FastAPI and Uvicorn
-RUN pip3 install "fastapi[standard]" python-multipart
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    perl \
+    wget \
+    xz-utils \
+    fontconfig \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy server code into image
-COPY server.py /server.py
+# Download and install TeX Live
+WORKDIR /tmp
+RUN wget https://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz \
+    && tar -xzf install-tl-unx.tar.gz \
+    && cd install-tl-* \
+    && perl ./install-tl --no-interaction --scheme=small \
+    && cd /tmp && rm -rf install-tl*
 
-# Expose port 8080
-EXPOSE 8080
+# Set working directory for LaTeX compilation
+WORKDIR /workspace
 
-# Run FastAPI app
-CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8080"]
+# Simple test document
+COPY test.tex .
+
+# Command to compile LaTeX document to PDF
+CMD ["sh", "-c", "pdflatex test.tex && ls -lh *.pdf"]
