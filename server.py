@@ -34,3 +34,9 @@ async def compile_latex(latex_code: str = Form(...)):
             f = f"{job_id}.{ext}"
             if os.path.exists(f):
                 os.remove(f)
+
+
+# curl -X POST http://localhost:8000/compile \
+#   -F 'latex_code=\documentclass{article}\begin{document}Hello, World!\end{document}' \
+#   --output output.pdf
+
