@@ -1,15 +1,16 @@
-FROM debian:bullseye-slim
+FROM registry.gitlab.com/islandoftex/images/texlive:latest
 
-# Install texlive + python
-RUN apt-get update && \
-    apt-get install -y texlive-latex-base texlive-latex-extra texlive-fonts-recommended \
-    python3 python3-pip && \
-    rm -rf /var/lib/apt/lists/*
+# Install Python and pip
+RUN apk add --no-cache python3 py3-pip
 
-# Install FastAPI & Uvicorn
-COPY requirements.txt .
-RUN pip3 install --no-cache-dir -r requirements.txt
+# Install FastAPI and Uvicorn
+RUN pip install fastapi[standard] python-multipart
 
-COPY app.py .
+# Copy server code into image
+COPY server.py /server.py
 
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+# Expose port 8080
+EXPOSE 8080
+
+# Run FastAPI app
+CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8080"]
