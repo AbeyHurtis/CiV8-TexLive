@@ -1,22 +1,17 @@
-#!/bin/sh
+#!/bin/bash
 
-# Detect platform-specific bin path
+# Detect correct platform directory (e.g., aarch64 or x86_64)
 ARCH=$(uname -m)
+if [ "$ARCH" = "x86_64" ]; then
+  TEXBIN="/usr/local/texlive/2025/bin/x86_64-linux"
+elif [ "$ARCH" = "aarch64" ]; then
+  TEXBIN="/usr/local/texlive/2025/bin/aarch64-linux"
+else
+  echo "Unsupported architecture: $ARCH"
+  exit 1
+fi
 
-case "$ARCH" in
-    x86_64)
-        BIN_PATH="/usr/local/texlive/2025/bin/x86_64-linux"
-        ;;
-    aarch64 | arm64)
-        BIN_PATH="/usr/local/texlive/2025/bin/aarch64-linux"
-        ;;
-    *)
-        echo "Unsupported architecture: $ARCH"
-        exit 1
-        ;;
-esac
+export PATH="$TEXBIN:$PATH"
 
-export PATH="$BIN_PATH:$PATH"
-
-# Compile the LaTeX file
-pdflatex test.tex && ls -lh *.pdf
+# Run FastAPI app with Uvicorn
+exec uvicorn server:app --host 0.0.0.0 --port 8000

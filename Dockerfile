@@ -9,6 +9,8 @@ RUN apt-get update && apt-get install -y \
     wget \
     xz-utils \
     fontconfig \
+    python3 \
+    python3-pip\
     && rm -rf /var/lib/apt/lists/*
 
 # Install TeX Live
@@ -19,14 +21,19 @@ RUN wget https://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz \
     && perl ./install-tl --no-interaction --scheme=small \
     && cd /tmp && rm -rf install-tl*
 
+COPY requirements.txt .
+RUN pip3 install --no-cache-dir -r requirements.txt
+    
 # Set working directory for document compilation
 WORKDIR /workspace
 
-# Copy your test file
-COPY test.tex .
+COPY server.py .
 
 # Set entrypoint script to dynamically resolve arch and run pdflatex
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
+
+# Expose FastAPI port 
+EXPOSE 8000
 
 ENTRYPOINT ["/entrypoint.sh"]
