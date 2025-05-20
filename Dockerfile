@@ -6,7 +6,7 @@ RUN apt-get update && \
     apt-get clean
 
 # Install FastAPI and Uvicorn
-RUN pip3 install fastapi[standard] python-multipart
+RUN pip3 install "fastapi[standard]" python-multipart
 
 # Copy server code into image
 COPY server.py /server.py
