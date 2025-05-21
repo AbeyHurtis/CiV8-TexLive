@@ -14,4 +14,5 @@ fi
 export PATH="$TEXBIN:$PATH"
 
 # Run FastAPI app with Uvicorn
-exec uvicorn server:app --host 0.0.0.0 --port 8000
+# exec uvicorn server:app --host 0.0.0.0 --port 8000
+exec uvicorn server:app --host 0.0.0.0 --port $PORT

@@ -12,6 +12,7 @@ app = FastAPI()
 #   --output output.pdf
 
 
+
 def cleanup_files(job_id):
     # Clean up all generated files
     extensions = ['aux', 'log', 'pdf', 'tex']
@@ -19,6 +20,11 @@ def cleanup_files(job_id):
         f = f"{job_id}.{ext}"
         if os.path.exists(f):
             os.remove(f)
+
+
+@app.get("/")
+def read_root():
+    return {"Tex": "Live"}
 
 
 @app.post("/compile")
