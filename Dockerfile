@@ -5,6 +5,7 @@ ENV TEXLIVE_VERSION=2025
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
+    nano \
     perl \
     wget \
     xz-utils \
@@ -14,11 +15,11 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install TeX Live
-WORKDIR /tmp
+# WORKDIR /tmp
 RUN wget https://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz \
     && tar -xzf install-tl-unx.tar.gz \
     && cd install-tl-* \
-    && perl ./install-tl --no-interaction --scheme=small \
+    && perl ./install-tl --no-interaction --scheme=full \
     && cd /tmp && rm -rf install-tl*
 
 COPY requirements.txt .
