@@ -7,8 +7,7 @@ import os
 app = FastAPI()
 # Test Command
 # curl -X POST http://localhost:8000/compile \
-#   -F 'latex_code=\documentclass{article}
-# \begin{document}Hello, World!\end{document}' \
+#   -F 'tex_file=@./test.tex' \
 #   --output output.pdf
 
 
