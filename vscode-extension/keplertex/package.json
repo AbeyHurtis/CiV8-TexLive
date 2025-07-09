@@ -16,6 +16,10 @@
       {
         "command": "keplertex.helloWorld",
         "title": "Hello World"
+      },
+      {
+        "command": "keplertex.testCommand",
+        "title": "testCommand"
       }
     ]
   },

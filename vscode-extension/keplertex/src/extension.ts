@@ -16,8 +16,12 @@ export function activate(context: vscode.ExtensionContext) {
 	const disposable = vscode.commands.registerCommand('keplertex.helloWorld', () => {
 		// The code you place here will be executed every time your command is executed
 		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from KeplerTex!');
+		vscode.window.showInformationMessage('Hello World - KeplerTex!');
 	});
+
+	const testCommand = vscode.commands.registerCommand('keplertex.testCommand', () => {
+		vscode.window.showInformationMessage('TestCommand');
+	})
 
 	context.subscriptions.push(disposable);
 }
